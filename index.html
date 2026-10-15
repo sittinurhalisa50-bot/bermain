@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kotak Misteri - Bahasa Indonesia</title>
+<style>
+:root{--ink:#26324b;--cream:#fffaf0;--pink:#ff6584;--blue:#4f8cff;--yellow:#ffcf4a;--green:#39c99a;--purple:#a879f8}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family: "Trebuchet MS", Arial, sans-serif;color:var(--ink);background:linear-gradient(135deg,#e4f7ff,#fff0f5 55%,#fff7d6);overflow-x:hidden}
+main{max-width:1100px;margin:auto;padding:20px}
+header{text-align:center;padding:10px 0 18px}
+.kicker{display:inline-block;background:#fff;border:2px solid #e8eaf3;border-radius:999px;padding:7px 15px;font-weight:800;font-size:.9rem}
+h1{font-size:clamp(2rem,5vw,3.8rem);margin:12px 0 5px;line-height:1.05;color:#29365b;text-shadow:2px 3px 0 #fff}
+.subtitle{font-size:clamp(1rem,2vw,1.2rem);margin:8px 0}
+.topbar{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:16px 0}
+.pill{background:#fff;padding:10px 17px;border-radius:16px;box-shadow:0 4px 0 #dfe5f0;font-weight:800}
+#score{color:#087c61}#progress{color:#7650c6}
+.instructions{text-align:center;max-width:700px;margin:0 auto 18px;background:#ffffffc9;padding:14px 18px;border-radius:18px;font-size:1.08rem}
+.boxes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin:22px 0}
+.mystery{border:0;border-radius:22px;min-height:170px;padding:15px 8px;color:white;font-size:1rem;font-weight:900;cursor:pointer;box-shadow:0 8px 0 rgba(38,50,75,.18);transition:transform .18s,filter .18s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.mystery:hover:not(:disabled){transform:translateY(-6px) rotate(-1deg);filter:brightness(1.05)}
+.mystery:active:not(:disabled){transform:translateY(3px);box-shadow:0 3px 0 rgba(38,50,75,.18)}
+.mystery:focus-visible,button:focus-visible{outline:4px solid #26324b;outline-offset:3px}
+.mystery .emoji{font-size:clamp(2.6rem,5vw,4.3rem);filter:drop-shadow(0 3px 0 #0002)}
+.mystery .label{font-size:1.05rem}
+.mystery .status{font-size:.82rem;background:#ffffff35;padding:5px 9px;border-radius:999px}
+.mystery:disabled{cursor:default;opacity:.7;filter:grayscale(.25)}
+.c1{background:linear-gradient(145deg,#ff6584,#e83d65)}.c2{background:linear-gradient(145deg,#4f8cff,#2862d6)}.c3{background:linear-gradient(145deg,#ffcf4a,#f0a91d);color:#59410a}.c4{background:linear-gradient(145deg,#39c99a,#159b75)}.c5{background:linear-gradient(145deg,#b28bff,#8054df)}
+.panel{display:none;background:#fff;border:3px solid #e7eaf4;border-radius:26px;padding:clamp(18px,4vw,32px);box-shadow:0 12px 30px #33446616;max-width:820px;margin:20px auto;text-align:center;animation:pop .35s ease}
+.panel.show{display:block}
+@keyframes pop{0%{opacity:0;transform:scale(.86) translateY(12px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes wiggle{0%,100%{transform:rotate(0) scale(1)}25%{transform:rotate(-7deg) scale(1.06)}50%{transform:rotate(7deg) scale(1.1)}75%{transform:rotate(-4deg) scale(1.04)}}
+.opening{animation:wiggle .65s ease}
+.panel h2{font-size:clamp(1.5rem,3vw,2.2rem);margin:5px 0 12px}
+.question{font-size:clamp(1.15rem,2.6vw,1.5rem);line-height:1.5;font-weight:800;margin:18px auto;max-width:700px}
+.answers{display:grid;grid-template-columns:1fr;gap:12px;max-width:650px;margin:18px auto}
+.answer{border:3px solid #dce5f7;border-radius:16px;background:#f5f8ff;padding:15px 18px;font-size:1.08rem;font-weight:800;cursor:pointer;color:var(--ink);text-align:left;min-height:58px}
+.answer:hover:not(:disabled){background:#e7efff;border-color:#7da5ff}
+.answer.correct{background:#d8f8e9;border-color:#2dbb83}.answer.wrong{background:#ffe0e5;border-color:#f46b82}
+.btn{border:0;border-radius:15px;padding:14px 22px;font-size:1.05rem;font-weight:900;cursor:pointer;min-height:54px;background:#29365b;color:#fff;box-shadow:0 5px 0 #18223d;margin:5px}
+.btn:hover{filter:brightness(1.12);transform:translateY(-1px)}.btn.secondary{background:#edf1fb;color:#29365b;box-shadow:0 5px 0 #d2daed}.btn.green{background:#16a878;box-shadow:0 5px 0 #087a56}
+.feedback{min-height:34px;font-weight:900;font-size:1.08rem;margin:12px 0}
+.bonus{font-size:clamp(1.2rem,3vw,2rem);font-weight:900;color:#9a64e8}
+.hidden{display:none!important}
+footer{text-align:center;color:#64708a;padding:20px 0 8px;font-size:.9rem}
+.confetti{position:fixed;top:-15px;width:10px;height:15px;z-index:99;pointer-events:none;animation:fall 2.3s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.1}}
+@media(max-width:760px){main{padding:12px}.boxes{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.mystery{min-height:135px}.mystery:last-child{grid-column:1/-1;max-width:calc(50% - 6px);width:100%;justify-self:center}}
+@media(min-width:761px) and (max-width:920px){.boxes{gap:9px}.mystery{min-height:145px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <span class="kicker">🎈 PERMAINAN EDUKASI SEKOLAH DASAR</span>
+  <h1>🎁 KOTAK MISTERI</h1>
+  <p class="subtitle"><strong>AYO BERMAIN!</strong> — Bahasa Indonesia</p>
+  <div class="topbar">
+    <div class="pill">⭐ Skor: <span id="score">0</span></div>
+    <div class="pill">📦 Kotak dibuka: <span id="progress">0 dari 5</span></div>
+    <button class="btn secondary" id="soundBtn" aria-pressed="true">🔊 Suara: Aktif</button>
+  </div>
+</header>
+<div class="instructions" id="instructions">Pilih satu kotak misteri untuk membuka kejutan. Jawab pertanyaan atau selesaikan tantangannya untuk mendapatkan poin!</div>
+<section class="boxes" id="boxes" aria-label="Pilih kotak misteri">
+  <button class="mystery c1" data-box="0"><span class="emoji">🎁</span><span class="label">KOTAK 1</span><span class="status">Buka aku!</span></button>
+  <button class="mystery c2" data-box="1"><span class="emoji">🎁</span><span class="label">KOTAK 2</span><span class="status">Buka aku!</span></button>
+  <button class="mystery c3" data-box="2"><span class="emoji">🎁</span><span class="label">KOTAK 3</span><span class="status">Buka aku!</span></button>
+  <button class="mystery c4" data-box="3"><span class="emoji">🎁</span><span class="label">KOTAK 4</span><span class="status">Buka aku!</span></button>
+  <button class="mystery c5" data-box="4"><span class="emoji">🎁</span><span class="label">KOTAK 5</span><span class="status">Buka aku!</span></button>
+</section>
+
+<section class="panel" id="questionPanel" aria-live="polite">
+  <div id="panelEmoji" style="font-size:3rem">🎉</div>
+  <h2 id="panelTitle">Kejutan Misteri!</h2>
+  <div class="question" id="questionText"></div>
+  <div class="answers" id="answers"></div>
+  <div class="feedback" id="feedback" role="status"></div>
+  <div id="challengeArea" class="hidden">
+    <p>Ucapkan jawabanmu kepada guru atau teman. Jika sudah selesai, tekan tombol di bawah.</p>
+    <button class="btn green" id="finishChallenge">✅ Selesai Tantangan (+10 poin)</button>
+  </div>
+  <div id="bonusArea" class="hidden">
+    <div class="bonus">🌟 BONUS 20 POIN! 🌟</div>
+    <p>Kamu beruntung! Hadiah bonus berhasil didapatkan.</p>
+    <button class="btn green" id="claimBonus">🎉 Ambil Bonus</button>
+  </div>
+  <button class="btn secondary" id="backBtn">↩ Kembali ke Kotak</button>
+</section>
+
+<section class="panel" id="endPanel" aria-live="polite">
+  <div style="font-size:4rem">🏆</div>
+  <h2 id="endTitle">Hebat!</h2>
+  <p class="question" id="endText"></p>
+  <p style="font-size:1.25rem;font-weight:900">Skor akhir: <span id="finalScore">0</span> poin</p>
+  <button class="btn green" id="playAgain">🔄 MAIN LAGI</button>
+</section>
+<footer>Belajar Bahasa Indonesia menjadi lebih seru ketika kita bermain bersama! 🌈</footer>
+</main>
+<script>
+(() => {
+ const scoreEl=document.getElementById('score'), progressEl=document.getElementById('progress');
+ const boxes=[...document.querySelectorAll('.mystery')], panel=document.getElementById('questionPanel'), endPanel=document.getElementById('endPanel');
+ const qText=document.getElementById('questionText'), answersEl=document.getElementById('answers'), feedback=document.getElementById('feedback');
+ const challengeArea=document.getElementById('challengeArea'), bonusArea=document.getElementById('bonusArea');
+ let score=0, opened=new Set(), activeBox=null, soundOn=true, answered=false, bonusClaimed=false, audioCtx=null;
+ const data=[
+  {title:'Kotak 1 — Tebak Kata',emoji:'⚽',type:'quiz',q:'Benda yang digunakan untuk menendang saat bermain sepak bola adalah ....',opts:['A. Bola','B. Buku','C. Pensil'],correct:0},
+  {title:'Kotak 2 — Susun Kalimat',emoji:'🧩',type:'quiz',q:'Pilih susunan kata yang benar: bermain – halaman – di – kami.',opts:['A. Bermain kami halaman di.','B. Kami bermain di halaman.','C. Di halaman kami bermain bola buku.'],correct:1},
+  {title:'Kotak 3 — Kalimat Ajakan',emoji:'💬',type:'quiz',q:'Kalimat yang tepat untuk mengajak teman bermain adalah ....',opts:['A. Ayo, kita bermain bersama!','B. Buku itu berwarna biru.','C. Ibu sedang memasak nasi.'],correct:0},
+  {title:'Kotak 4 — Tantangan Berbicara',emoji:'🎤',type:'challenge',q:'Sebutkan dua permainan yang kamu sukai, lalu buat satu kalimat tentang salah satunya.'},
+  {title:'Kotak 5 — Hadiah Kejutan',emoji:'🎉',type:'bonus',q:'Selamat! Ada hadiah misteri khusus untukmu.'}
+ ];
+ function tone(freq=600,duration=.13,type='sine'){
+  if(!soundOn)return;
+  try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended')audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(.0001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.12,audioCtx.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration+.02)}catch(e){}
+ }
+ function fanfare(){tone(523,.14);setTimeout(()=>tone(659,.14),100);setTimeout(()=>tone(784,.24),210)}
+ function confetti(){const colors=['#ff6584','#4f8cff','#ffcf4a','#39c99a','#a879f8'];for(let i=0;i<45;i++){const el=document.createElement('i');el.className='confetti';el.style.left=Math.random()*100+'vw';el.style.background=colors[i%colors.length];el.style.animationDelay=(Math.random()*.45)+'s';el.style.transform='rotate('+Math.random()*360+'deg)';document.body.appendChild(el);setTimeout(()=>el.remove(),3000)}}
+ function update(){scoreEl.textContent=score;progressEl.textContent=opened.size+' dari 5'}
+ function showPanel(){panel.classList.add('show');endPanel.classList.remove('show');panel.scrollIntoView({behavior:'smooth',block:'center'})}
+ function hidePanel(){panel.classList.remove('show')}
+ function openBox(i){
+  if(opened.has(i))return;
+  activeBox=i;answered=false;
+  const b=boxes[i];b.classList.add('opening');setTimeout(()=>b.classList.remove('opening'),700);
+  tone(360,.1,'triangle');setTimeout(()=>tone(520,.13,'triangle'),120);
+  opened.add(i);b.disabled=true;b.querySelector('.emoji').textContent='📭';b.querySelector('.status').textContent='Sudah dibuka';update();
+  const d=data[i];document.getElementById('panelEmoji').textContent=d.emoji;document.getElementById('panelTitle').textContent=d.title;
+  qText.textContent=d.q;answersEl.innerHTML='';feedback.textContent='';challengeArea.classList.add('hidden');bonusArea.classList.add('hidden');
+  if(d.type==='quiz'){
+   d.opts.forEach((opt,j)=>{const btn=document.createElement('button');btn.className='answer';btn.textContent=opt;btn.addEventListener('click',()=>checkAnswer(j,btn));answersEl.appendChild(btn)});
+  }else if(d.type==='challenge'){
+   challengeArea.classList.remove('hidden');
+  }else{
+   bonusArea.classList.remove('hidden');
+   if(!bonusClaimed){fanfare();confetti()}
+  }
+  showPanel();
+ }
+ function checkAnswer(j,btn){
+  if(answered)return;answered=true;const d=data[activeBox];[...answersEl.children].forEach(x=>x.disabled=true);
+  if(j===d.correct){score+=10;btn.classList.add('correct');feedback.textContent='🎉 Hebat! Jawabanmu benar! +10 poin';tone(740,.18);setTimeout(()=>tone(940,.2),130);confetti()}
+  else{btn.classList.add('wrong');answersEl.children[d.correct].classList.add('correct');feedback.textContent='💪 Belum tepat. Jawaban yang benar sudah ditandai. Tetap semangat!';tone(240,.2,'triangle')}
+  update();finishIfDone();
+ }
+ document.getElementById('finishChallenge').addEventListener('click',()=>{
+  if(answered)return;answered=true;score+=10;feedback.textContent='👏 Tantangan selesai! Terima kasih sudah berani berbicara. +10 poin';challengeArea.classList.add('hidden');tone(740,.18);confetti();update();finishIfDone();
+ });
+ document.getElementById('claimBonus').addEventListener('click',()=>{
+  if(bonusClaimed)return;bonusClaimed=true;score+=20;answered=true;feedback.textContent='🌟 Bonus 20 poin berhasil ditambahkan!';document.getElementById('claimBonus').disabled=true;tone(880,.2);setTimeout(()=>tone(1040,.25),160);update();finishIfDone();
+ });
+ function finishIfDone(){if(opened.size===5){setTimeout(showEnd,650)}}
+ function showEnd(){
+  hidePanel();endPanel.classList.add('show');document.getElementById('finalScore').textContent=score;
+  document.getElementById('endTitle').textContent=score>=60?'LUAR BIASA! KAMU JUARA KOTAK MISTERI!':'HEBAT! TERUSLAH BELAJAR DAN BERMAIN!';
+  document.getElementById('endText').textContent=score>=60?'Kamu berhasil mengumpulkan banyak poin. Pertahankan semangat belajarmu!':'Kamu sudah berusaha dengan baik. Ayo bermain lagi dan tingkatkan skormu!';
+  fanfare();confetti();endPanel.scrollIntoView({behavior:'smooth',block:'center'});
+ }
+ boxes.forEach((b)=>b.addEventListener('click',()=>openBox(Number(b.dataset.box))));
+ document.getElementById('backBtn').addEventListener('click',()=>{hidePanel();if(opened.size===5)showEnd();else document.getElementById('boxes').scrollIntoView({behavior:'smooth',block:'center'})});
+ document.getElementById('soundBtn').addEventListener('click',function(){soundOn=!soundOn;this.textContent=soundOn?'🔊 Suara: Aktif':'🔇 Suara: Mati';this.setAttribute('aria-pressed',String(soundOn));if(soundOn)tone(650,.12)});
+ document.getElementById('playAgain').addEventListener('click',()=>{
+  score=0;opened=new Set();activeBox=null;answered=false;bonusClaimed=false;
+  boxes.forEach(b=>{b.disabled=false;b.querySelector('.emoji').textContent='🎁';b.querySelector('.status').textContent='Buka aku!'});
+  update();hidePanel();endPanel.classList.remove('show');document.getElementById('claimBonus').disabled=false;
+  document.getElementById('instructions').scrollIntoView({behavior:'smooth',block:'center'});tone(600,.12);
+ });
+ update();
+})();
+</script>
+</body>
+</html>
